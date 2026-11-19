@@ -141,6 +141,14 @@ export const ChatMessageSchema = z.object({
       reciprocityScore: z.number(),
     })
     .optional(),
+  dokuroThoughtExchange: z
+    .object({
+      dokuroSmallThoughtImpulse: z.string(),
+      alyxOmnilaritySynthesis: z.string(),
+      pipiruChantCast: z.string(),
+      badassQuotientsTag: z.string(),
+    })
+    .optional(),
 });
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 

@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
+import Image from 'next/image';
+import { motion } from 'motion/react';
 import {
   VibePoint,
   ViewMode,
@@ -26,7 +28,19 @@ import {
   evaluateClayPuttyTriangle192Matrix,
   evaluateNonAlyx8MhzHardwareCap,
 } from '@/lib/alyx-3d-fsm-192-emotions';
+import {
+  ATTACHED_BODY_LANGUAGE_CHART_ASSET,
+  EMOTIVE_BODY_LANGUAGE_24_CUES,
+  STREAMER_AND_GLAMOUR_16_ARCHETYPES,
+  computeSedenionBreathingKinematics,
+} from '@/lib/alyx-crunchtime-streamer-body-language';
 import AlyxThreeHumanoidAvatar from '@/components/AlyxThreeHumanoidAvatar';
+import AlyxApparatusUmlRoarChore from '@/components/AlyxApparatusUmlRoarChore';
+import {
+  AccelerometerSample,
+  evaluateAccelerometerAlexanderLlnShake,
+  generateAlexanderShakeBurstSamples,
+} from '@/lib/hyperbook-aida64-accelerometer-lln';
 import {
   Heart,
   Activity,
@@ -37,6 +51,8 @@ import {
   ChevronRight,
   Eye,
   Box,
+  Network,
+  Waves,
 } from 'lucide-react';
 
 interface ViewPanel1TelemetryProps {
@@ -170,6 +186,7 @@ export default function ViewPanel1Telemetry({
   vibeHistory,
   viewMode,
   emojiStyle,
+  systemTone,
   idleSeconds,
   needinessIntensity,
   infatuationReciprocityForcing,
@@ -184,6 +201,11 @@ export default function ViewPanel1Telemetry({
   const [isSynthesizerCollapsed, setIsSynthesizerCollapsed] = useState<boolean>(true);
   const [isOccipitalCollapsed, setIsOccipitalCollapsed] = useState<boolean>(true);
   const [isThreeAvatarCollapsed, setIsThreeAvatarCollapsed] = useState<boolean>(true);
+  const [isApparatusCollapsed, setIsApparatusCollapsed] = useState<boolean>(true);
+  const [isStreamerCrunchtimeCollapsed, setIsStreamerCrunchtimeCollapsed] =
+    useState<boolean>(true);
+  const [zdBreathingModulator, setZdBreathingModulator] = useState<number>(0);
+  const [selectedStreamerId, setSelectedStreamerId] = useState<string>('arch-01');
   const [selectedFsmState, setSelectedFsmState] = useState<UnityFsmStateId | null>(null);
   const [selectedEmotion192Idx, setSelectedEmotion192Idx] = useState<number | undefined>(undefined);
 
@@ -192,6 +214,39 @@ export default function ViewPanel1Telemetry({
   const [facialPhysics, setFacialPhysics] = useState<ScholarFacialActionState>(
     createInitialScholarFacialState
   );
+  const [accelSamples, setAccelSamples] = useState<AccelerometerSample[]>([]);
+  const [isScreenShaking, setIsScreenShaking] = useState<boolean>(false);
+
+  const llnAccelState = evaluateAccelerometerAlexanderLlnShake(accelSamples);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('DeviceMotionEvent' in window)) return;
+    const onMotion = (e: DeviceMotionEvent) => {
+      const acc = e.acceleration ?? e.accelerationIncludingGravity;
+      if (!acc) return;
+      const ax = acc.x ?? 0;
+      const ay = acc.y ?? 0;
+      const az = acc.z ?? 0;
+      const mag = Math.sqrt(ax * ax + ay * ay + az * az);
+      setAccelSamples((prev) => [
+        ...prev.slice(-23),
+        { ax, ay, az, timestampMs: Date.now() },
+      ]);
+      if (mag >= 5.2) {
+        setIsScreenShaking(true);
+        window.setTimeout(() => setIsScreenShaking(false), 520);
+      }
+    };
+    window.addEventListener('devicemotion', onMotion);
+    return () => window.removeEventListener('devicemotion', onMotion);
+  }, []);
+
+  const handleTriggerAlexanderLlnScreenShake = () => {
+    const burst = generateAlexanderShakeBurstSamples(Date.now());
+    setAccelSamples((prev) => [...prev.slice(-12), ...burst].slice(-24));
+    setIsScreenShaking(true);
+    window.setTimeout(() => setIsScreenShaking(false), 520);
+  };
 
   const latestVibe = vibeHistory[vibeHistory.length - 1] || {
     timestamp: 'Now',
@@ -258,6 +313,16 @@ export default function ViewPanel1Telemetry({
   });
 
   const sedenionStateNorm = psiAlyx ? sedenionNorm(psiAlyx).toFixed(3) : '3.482';
+  const effectiveZdProximity = Math.min(100, zeroDivisorProximity + zdBreathingModulator);
+  const breathingKinematics = computeSedenionBreathingKinematics({
+    psiAlyx,
+    zeroDivisorProximity: effectiveZdProximity,
+    arousal: latestVibe.arousal,
+    affection: latestVibe.affection,
+  });
+  const activeStreamerArchetype =
+    STREAMER_AND_GLAMOUR_16_ARCHETYPES.find((a) => a.id === selectedStreamerId) ||
+    STREAMER_AND_GLAMOUR_16_ARCHETYPES[0];
 
   // Derive active and target bucket indices directly from state
   const activeBucketIndex = idleSeconds > 20 || viewMode === 'bedroom_fantasy' ? 1 : 0;
@@ -401,19 +466,60 @@ export default function ViewPanel1Telemetry({
   const idleWeavePath = buildSmoothSvgPath(idleWeaveSeries);
 
   return (
-    <section
+    <motion.section
       aria-label="ViewPanel 1: Collapsible Emotional Vibe Time Analysis & FACS Physics Emoji Synthesizer"
-      className="max-h-[40vh] w-full bg-slate-950 border-b border-slate-800/90 px-4 py-2 flex flex-col gap-2 overflow-y-auto shrink-0"
+      animate={
+        isScreenShaking
+          ? {
+              x: [0, -9, 9, -6, 6, -3, 3, 0],
+              y: [0, 4, -4, 3, -3, 1, -1, 0],
+              scaleY: 1,
+              scaleX: 1,
+              borderColor: 'rgba(16, 185, 129, 0.9)',
+              boxShadow: '0 4px 26px rgba(16, 185, 129, 0.45)',
+            }
+          : {
+              x: 0,
+              y: 0,
+              scaleY: [1, breathingKinematics.scaleYPeak, 1],
+              scaleX: [1, breathingKinematics.scaleXPeak, 1],
+              borderColor: [
+                'rgba(30, 41, 59, 0.9)',
+                `rgba(244, 63, 94, ${breathingKinematics.glowOpacityPeak})`,
+                'rgba(30, 41, 59, 0.9)',
+              ],
+              boxShadow: [
+                '0 0 0px rgba(244, 63, 94, 0)',
+                `0 4px 22px rgba(244, 63, 94, ${(breathingKinematics.glowOpacityPeak * 0.35).toFixed(2)})`,
+                '0 0 0px rgba(244, 63, 94, 0)',
+              ],
+            }
+      }
+      transition={
+        isScreenShaking
+          ? {
+              duration: 0.48,
+              ease: 'easeOut',
+            }
+          : {
+              duration: breathingKinematics.cycleDurationSec,
+              repeat: Infinity,
+              repeatType: 'mirror',
+              ease: 'easeInOut',
+            }
+      }
+      style={{ transformOrigin: 'top center' }}
+      className="max-h-[34dvh] w-screen max-w-full bg-slate-950 border-b border-slate-800/90 px-1.5 sm:px-2 py-1.5 flex flex-col gap-1.5 overflow-y-auto shrink-0"
     >
       {/* Top Scrollable Telemetry Bar + Live Physics-Lerped Mini Face & Collapsible Container Toggles */}
-      <div className="flex items-center justify-between gap-3 overflow-x-auto no-scrollbar py-0.5">
+      <div className="flex items-center justify-between gap-2 overflow-x-auto no-scrollbar py-0.5 w-full">
         {/* Left: Live Physics-Lerped Mini SVG Face + Collapsible Toggles */}
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex items-center gap-1.5 shrink-0">
           {/* Compact Always-Visible Physics-Lerped Kawaii SVG Face Badge */}
           <div
             onClick={() => setIsSynthesizerCollapsed(!isSynthesizerCollapsed)}
             title="Click to expand/collapse FACS Biomechanical Facial Movement Synthesizer"
-            className="cursor-pointer flex items-center gap-2 px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800/90 border border-slate-800 transition-colors shrink-0"
+            className="cursor-pointer flex items-center gap-1.5 px-1.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800/90 border border-slate-800 transition-colors shrink-0"
           >
             <svg
               viewBox="0 0 140 130"
@@ -500,7 +606,7 @@ export default function ViewPanel1Telemetry({
           <button
             type="button"
             onClick={() => setIsGraphCollapsed(!isGraphCollapsed)}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-mono transition-colors whitespace-nowrap shrink-0 ${
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-xs font-mono transition-colors whitespace-nowrap shrink-0 ${
               !isGraphCollapsed
                 ? 'bg-rose-500/15 text-rose-300 border-rose-500/40'
                 : 'bg-slate-900 text-slate-300 hover:text-slate-100 border-slate-800'
@@ -518,7 +624,7 @@ export default function ViewPanel1Telemetry({
           <button
             type="button"
             onClick={() => setIsSynthesizerCollapsed(!isSynthesizerCollapsed)}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-mono transition-colors whitespace-nowrap shrink-0 ${
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-xs font-mono transition-colors whitespace-nowrap shrink-0 ${
               !isSynthesizerCollapsed
                 ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/40'
                 : 'bg-slate-900 text-slate-300 hover:text-slate-100 border-slate-800'
@@ -536,7 +642,7 @@ export default function ViewPanel1Telemetry({
           <button
             type="button"
             onClick={() => setIsOccipitalCollapsed(!isOccipitalCollapsed)}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-mono transition-colors whitespace-nowrap shrink-0 ${
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-xs font-mono transition-colors whitespace-nowrap shrink-0 ${
               !isOccipitalCollapsed
                 ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40'
                 : 'bg-slate-900 text-slate-300 hover:text-slate-100 border-slate-800'
@@ -555,7 +661,7 @@ export default function ViewPanel1Telemetry({
           <button
             type="button"
             onClick={() => setIsThreeAvatarCollapsed(!isThreeAvatarCollapsed)}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-mono transition-colors whitespace-nowrap shrink-0 ${
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-xs font-mono transition-colors whitespace-nowrap shrink-0 ${
               !isThreeAvatarCollapsed
                 ? 'bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/40'
                 : 'bg-slate-900 text-slate-300 hover:text-slate-100 border-slate-800'
@@ -569,10 +675,116 @@ export default function ViewPanel1Telemetry({
             <Box className="w-3.5 h-3.5 text-fuchsia-400" />
             <span>04. 3D Sub-Collarbone Rig &amp; 192-Emo 2π Putty</span>
           </button>
+
+          {/* Collapsible Toggle 5: Alyx Apparatus System — Automatic UML 2.5 + Hyperbook ROAR Plan + Chore Flirt Reverse-NLP (Starts Collapsed) */}
+          <button
+            type="button"
+            onClick={() => setIsApparatusCollapsed(!isApparatusCollapsed)}
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-xs font-mono transition-colors whitespace-nowrap shrink-0 ${
+              !isApparatusCollapsed
+                ? 'bg-sky-500/15 text-sky-300 border-sky-500/40'
+                : 'bg-slate-900 text-slate-300 hover:text-slate-100 border-slate-800'
+            }`}
+          >
+            {isApparatusCollapsed ? (
+              <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+            ) : (
+              <ChevronDown className="w-3.5 h-3.5 text-sky-400" />
+            )}
+            <Network className="w-3.5 h-3.5 text-sky-400" />
+            <span>05. UML/ROAR Apparatus &amp; Chore Reverse-NLP</span>
+          </button>
+
+          {/* Collapsible Toggle 6: 16 Streamer/Bombshell Fertility & Crunchtime + Emotive Body Language Matrix (Starts Collapsed) */}
+          <button
+            type="button"
+            onClick={() => setIsStreamerCrunchtimeCollapsed(!isStreamerCrunchtimeCollapsed)}
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-xs font-mono transition-colors whitespace-nowrap shrink-0 ${
+              !isStreamerCrunchtimeCollapsed
+                ? 'bg-rose-500/20 text-rose-200 border-rose-500/50'
+                : 'bg-slate-900 text-slate-300 hover:text-slate-100 border-slate-800'
+            }`}
+          >
+            {isStreamerCrunchtimeCollapsed ? (
+              <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+            ) : (
+              <ChevronDown className="w-3.5 h-3.5 text-rose-400" />
+            )}
+            <Flame className="w-3.5 h-3.5 text-rose-400" />
+            <span>06. 16 Streamer/Bombshell Crunchtime &amp; Body Language</span>
+          </button>
+
+          {/* Interactive Trigger 7: Feed-Forward LLN Accelerometer Screen-Shake Alexander Detector */}
+          <button
+            type="button"
+            onClick={handleTriggerAlexanderLlnScreenShake}
+            title="Trigger Hyperbook Node 355/110 Feed-Forward LLN/LNN Accelerometer Screen-Shake Alexander Detection"
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-xs font-mono transition-colors whitespace-nowrap shrink-0 ${
+              llnAccelState.isAlexanderDetected || isScreenShaking
+                ? 'bg-emerald-500/20 text-emerald-200 border-emerald-400/60'
+                : 'bg-slate-900 text-emerald-300 hover:bg-slate-800 border-emerald-500/35'
+            }`}
+          >
+            <Waves className="w-3.5 h-3.5 text-emerald-400" />
+            <span>
+              {llnAccelState.isAlexanderDetected
+                ? `07. Alex Shake LOCKED (${llnAccelState.alexanderConfidencePct}%)`
+                : '07. LLN Shake-Detect Alex'}
+            </span>
+          </button>
         </div>
 
-        {/* Right: Horizontally Scrollable Live Sedenion & SDE Telemetry Readouts */}
-        <div className="flex items-center gap-3 text-xs font-mono tabular-nums text-slate-400 whitespace-nowrap shrink-0">
+        {/* Right: Horizontally Scrollable Live Omnilarity & Sedenion Telemetry Readouts */}
+        <div className="flex items-center gap-2.5 text-xs font-mono tabular-nums text-slate-400 whitespace-nowrap shrink-0">
+          <span className="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/40 text-emerald-200">
+            <Activity className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <strong>
+              AIDA64 16-Lib · LLN ΔC={llnAccelState.memsNode355DeltaCapFf}fF · gemini-3.5-flash
+            </strong>
+          </span>
+          <span aria-hidden="true">·</span>
+          <span className="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-fuchsia-500/15 border border-fuchsia-500/40 text-fuchsia-200">
+            <span className="relative w-4 h-4 rounded-full overflow-hidden inline-block border border-fuchsia-400 shrink-0">
+              <Image
+                src="/assets/aistudio/images__5__fea4dc6f.jpeg"
+                alt="Half-Life Alyx × Female Alexander Morph"
+                fill
+                sizes="16px"
+                referrerPolicy="no-referrer"
+                className="object-cover"
+              />
+            </span>
+            <strong>HL:Alyx×Alex Face (2028 Lock: ACTIVE)</strong>
+          </span>
+          <span aria-hidden="true">·</span>
+          <span>
+            Ψ-Breath:{' '}
+            <strong className="text-rose-300">
+              {breathingKinematics.cycleDurationSec}s ({breathingKinematics.breathsPerMinute} BPM · Z_prox={effectiveZdProximity.toFixed(1)}%)
+            </strong>
+          </span>
+          <span aria-hidden="true">·</span>
+          <span>
+            Fertile/Crunchtime:{' '}
+            <strong className="text-fuchsia-300">
+              {breathingKinematics.compositeFertilityVitalityPct}% / {breathingKinematics.compositeCrunchtimeReadinessPct}% ({activeStreamerArchetype.name.split(' ')[0]})
+            </strong>
+          </span>
+          <span aria-hidden="true">·</span>
+          <span>
+            State:{' '}
+            <strong className="text-rose-300">
+              THE OMNILARITY (Ω₁∪Ω₂∪Ω₃ · μ=0.996)
+            </strong>
+          </span>
+          <span aria-hidden="true">·</span>
+          <span>
+            Apparatus:{' '}
+            <strong className="text-sky-300">
+              UML 2.5 + ROAR P=6.89 + Chore→RevNLP[Pre-Emoji]
+            </strong>
+          </span>
+          <span aria-hidden="true">·</span>
           <span>
             Non-Alyx Hz:{' '}
             <strong className="text-emerald-300">
@@ -662,8 +874,154 @@ export default function ViewPanel1Telemetry({
       {(!isGraphCollapsed ||
         !isSynthesizerCollapsed ||
         !isOccipitalCollapsed ||
-        !isThreeAvatarCollapsed) && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 pt-1 items-stretch">
+        !isThreeAvatarCollapsed ||
+        !isApparatusCollapsed ||
+        !isStreamerCrunchtimeCollapsed) && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 pt-1 items-stretch">
+          {/* Collapsible Container 6: 16 Streamer/Bombshell Fertility & Crunchtime + Emotive Body Language Matrix */}
+          {!isStreamerCrunchtimeCollapsed && (
+            <div className="lg:col-span-12 rounded-xl bg-slate-900/90 border border-rose-500/40 p-2.5 space-y-2.5">
+              {/* Top Controls: Framer Motion Sedenion Breathing Modulator + Fertility/Crunchtime Readout */}
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800">
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded bg-rose-500/20 border border-rose-500/40 text-[10px] font-mono font-bold text-rose-300">
+                      FRAMER MOTION Ψ_ALYX BREATHING + 16 STREAMER/BOMBSHELL CRUNCHTIME SYNTHESIS
+                    </span>
+                    <span className="text-xs font-bold text-white">
+                      Fertility Vitality: {breathingKinematics.compositeFertilityVitalityPct}% · Crunchtime Readiness: {breathingKinematics.compositeCrunchtimeReadinessPct}%
+                    </span>
+                  </div>
+                  <p className="text-[11px] font-mono text-amber-300 mt-0.5">
+                    {breathingKinematics.breathingEquationLatex}
+                  </p>
+                </div>
+
+                {/* Interactive zeroDivisorProximity Breathing Speed Modulator */}
+                <div className="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono">
+                  <span className="text-cyan-300">
+                    Modulate Z(𝕊₁₆) Breathing Speed (+{zdBreathingModulator}%):
+                  </span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={85}
+                    step={5}
+                    value={zdBreathingModulator}
+                    onChange={(e) => setZdBreathingModulator(Number(e.target.value))}
+                    className="w-24 accent-rose-500 cursor-pointer"
+                  />
+                </div>
+              </div>
+
+              {/* 16 Streamer & Glamour Bombshell Co-Founder Archetypes Grid (e0..e15) */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs font-mono">
+                  <span className="text-rose-300 font-bold">
+                    I. 16 Streamer, Cam-Glamour &amp; Bombshell Co-Founder Archetypes Mapped to Ψ_Alyx (e₀..e₁₅)
+                  </span>
+                  <span className="text-slate-400">
+                    Active Muse: <strong className="text-white">{activeStreamerArchetype.name}</strong>
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1.5 max-h-56 overflow-y-auto pr-1">
+                  {STREAMER_AND_GLAMOUR_16_ARCHETYPES.map((arch) => {
+                    const active = arch.id === selectedStreamerId;
+                    return (
+                      <button
+                        key={arch.id}
+                        type="button"
+                        onClick={() => setSelectedStreamerId(arch.id)}
+                        className={`p-2 rounded-lg border text-left transition-all space-y-1 ${
+                          active
+                            ? 'bg-rose-500/20 border-rose-400 ring-1 ring-rose-400/50'
+                            : 'bg-slate-950/90 border-slate-800 hover:border-rose-500/40'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-1 text-[10px] font-mono">
+                          <span className="px-1.5 py-0.5 rounded bg-slate-900 text-rose-300 font-bold">
+                            {arch.code}
+                          </span>
+                          <span className="text-emerald-400">
+                            Fertile {arch.vitalityFertilityIndex}% · Grind {arch.crunchtimeGrindStamina}%
+                          </span>
+                        </div>
+                        <div className="text-xs font-bold text-white">{arch.name}</div>
+                        <p className="text-[11px] text-slate-300 leading-snug">
+                          {arch.signatureLookAndPosture}
+                        </p>
+                        <div className="text-[10px] font-mono text-cyan-300">
+                          ⚡ {arch.crunchtimeCoFounderSuperpower}
+                        </div>
+                        <div className="flex flex-wrap gap-1 pt-0.5">
+                          {arch.dominantBodyLanguageCues.map((cue) => (
+                            <span
+                              key={cue}
+                              className="px-1 py-0.5 rounded bg-slate-900 border border-slate-800 text-[9px] font-mono text-amber-300"
+                            >
+                              *{cue}*
+                            </span>
+                          ))}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Attached Emotive Body Language Blueprint (/assets/aistudio/1_3e85fc35.jpeg) + 12 Physiological Cues */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 pt-1 border-t border-slate-800">
+                <div className="lg:col-span-4 rounded-lg bg-slate-950 border border-slate-800 p-2 flex flex-col items-center justify-between">
+                  <div className="text-[11px] font-mono font-bold text-fuchsia-300 mb-1 self-start">
+                    II. Attached Emotive Body Language Reference
+                  </div>
+                  <div className="relative w-full h-44 rounded overflow-hidden bg-slate-900 border border-slate-800">
+                    <Image
+                      src={ATTACHED_BODY_LANGUAGE_CHART_ASSET}
+                      alt="Emotive Body Language Reference Sheet"
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 33vw"
+                      referrerPolicy="no-referrer"
+                      className="object-contain"
+                    />
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400 mt-1">
+                    Recontextualized for High-Arousal Crunchtime &amp; Bedroom Intimacy
+                  </span>
+                </div>
+
+                <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1.5 max-h-52 overflow-y-auto pr-1">
+                  {EMOTIVE_BODY_LANGUAGE_24_CUES.map((c) => (
+                    <div
+                      key={c.id}
+                      className="p-2 rounded-lg bg-slate-950 border border-slate-800 space-y-0.5"
+                    >
+                      <div className="flex items-center justify-between gap-1 text-[10px] font-mono">
+                        <span className="text-amber-300 font-bold">*{c.cue}*</span>
+                        <span className="text-rose-400">{c.breathingRateMultiplier}x BPM</span>
+                      </div>
+                      <p className="text-[11px] text-slate-300 leading-snug">
+                        {c.recontextualizedCrunchtimeMeaning}
+                      </p>
+                      <div className="text-[9px] font-mono text-cyan-400">{c.facsActionUnits}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Collapsible Container 5: Alyx Apparatus System — Automatic UML 2.5 + Hyperbook ROAR Plan + Chore Flirt Reverse-NLP */}
+          {!isApparatusCollapsed && (
+            <div className="lg:col-span-12">
+              <AlyxApparatusUmlRoarChore
+                emojiStyle={emojiStyle}
+                systemTone={systemTone}
+                viewMode={viewMode}
+              />
+            </div>
+          )}
+
           {/* Collapsible Container 4: Sub-Collarbone 3D Rigged Humanoid + Unity Animator FSM + 192-Emotion 2π Triangle Putty */}
           {!isThreeAvatarCollapsed && (
             <div className="lg:col-span-12">
@@ -1361,6 +1719,6 @@ export default function ViewPanel1Telemetry({
           )}
         </div>
       )}
-    </section>
+    </motion.section>
   );
 }

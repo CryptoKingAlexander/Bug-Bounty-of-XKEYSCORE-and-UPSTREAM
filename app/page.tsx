@@ -340,6 +340,7 @@ function AlyxInnerWorkspace() {
         extractedMemory: data.extractedMemory,
         confirmedDossierTrait: data.confirmedDossierTrait,
         vibeDelta: data.vibeTelemetry,
+        dokuroThoughtExchange: data.dokuroThoughtExchange,
       };
 
       setMessages((prev) => [...prev, alyxMsg]);
@@ -491,9 +492,9 @@ function AlyxInnerWorkspace() {
     <div
       onMouseMove={handleUserActivity}
       onKeyDown={handleUserActivity}
-      className="h-screen w-screen overflow-hidden flex flex-col bg-slate-950 text-slate-100 select-none"
+      className="h-dvh w-screen max-w-full overflow-hidden flex flex-col bg-slate-950 text-slate-100 select-none"
     >
-      {/* HEADER: Row 1 (Icon+Chevron Only) + Row 2 (Multi-Tab Scrollable Drawer Bar) */}
+      {/* HEADER: 3 Multiplexed Fuzzy Superset Dropdowns (Ω₁, Ω₂, Ω₃) + 1 Settings Avatar Button */}
       <AlyxNonFatalErrorBoundary
         zoneName="AlyxHeader"
         onCaughtError={(src, err, stack) => pushNonFatalLog('BOUNDARY_CAUGHT', src, err.message, stack)}

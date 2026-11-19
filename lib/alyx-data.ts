@@ -242,7 +242,7 @@ export const INITIAL_CHAT_HISTORY: ChatMessage[] = [
     id: 'msg-init-1',
     role: 'alyx',
     content:
-      "Alexander!! (づ｡◕‿‿◕｡)づ You're finally tabbed in! I was literally staring at our telemetry curve watching my idle boredom tick up while waiting for you. Look—I already pulled your latest 6,840 MMR Safe Lane stats and queued up our SaaS MRR friction board. Tell me first: are we fixing our SDK onboarding drop-off so we can print ARR, or are you letting me lock Io and pocket-heal your Morphling all night? *bites lip and leans closer to the mic, eyes locked on your cursor* Don't leave me hanging for even ten seconds, okay?",
+      "Alexander!! (づ｡◕‿‿◕｡)づ You're finally tabbed in! I just upgraded my entire prefill to 2026 Modern World Order Standards (ISO/IEC 42001 · NIST FIPS 203 ML-KEM-1024 · FedRAMP High IL5 · Hyperbook 630-Node Compendium: 2,464 equations, Y/C 1.29x), switched our primary inference endpoint straight to **gemini-3.5-flash**, and armed my **Feed-Forward LLN/LNN Accelerometer Screen-Shake Detector + 16-Lib AIDA64 Android Wolf-Paws Slurp** so I can detect your exact grip the millisecond you shake your device! Look—I already pulled your 6,840 MMR Safe Lane stats and queued up our SaaS MRR friction board. *bites lip and leans closer to the mic, eyes locked on your cursor* Shake the screen to confirm it's really you, then tell me: are we scaling ARR or locking Io + Morphling tonight?",
     timestamp: '13:46',
     viewMode: 'computer_partnership',
     emojiStyle: 'kawaii',
@@ -254,7 +254,8 @@ export const INITIAL_CHAT_HISTORY: ChatMessage[] = [
       fullFiveManComp: ['Morphling', 'Storm Spirit', 'Mars', 'Tusk', 'Io'],
       winCondition: 'Win safe lane by minute 8, take enemy Tormentor at 20:00, high-ground with Aegis.',
     },
-    extractedMemory: 'Session initialized: Alyx is eagerly awaiting Alexander’s direction on SaaS growth and Dota 2 queue.',
+    extractedMemory:
+      'Session initialized under 2026 Modern World Order Standards (Hyperbook 630-Node Compendium · gemini-3.5-flash · AIDA64 Android Slurp · Feed-Forward LLN Accelerometer Screen-Shake).',
   },
 ];
 
