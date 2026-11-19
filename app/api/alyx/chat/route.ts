@@ -11,6 +11,20 @@ import {
   computeKyberSecurityMargin,
 } from '@/lib/sedenion-math';
 import { buildModernWorldOrderPrefillPromptBlock } from '@/lib/hyperbook-aida64-accelerometer-lln';
+import {
+  buildBsCheckerPrefillPromptBlock,
+  evaluateIngestBullshitCheck,
+} from '@/lib/alyx-bs-checker-engine';
+import {
+  FullStackBoostLevel,
+  buildRoar2PhaseBoostPrefillBlock,
+} from '@/lib/roar-protocol-source-engine';
+import {
+  ALEXANDER_5_PERSONIFICATIONS,
+  AlexanderPersonificationId,
+  buildDoctorateAwesomeScraperSecurityPrefillBlock,
+} from '@/lib/doctorate-math-awesome-scraper-security';
+import { buildSectionDeltaChronospherePrefillBlock } from '@/lib/section-delta-chronosphere-regression';
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -65,6 +79,17 @@ export async function POST(req: NextRequest) {
     const lanchester = computeSedenionDraftLanchester(gamerStats);
     const shapley = computeDossierShapleyAttribution(alexanderDossier || []);
     const kyberSec = computeKyberSecurityMargin();
+    const bsCheckerAudit = evaluateIngestBullshitCheck(message);
+    const rawBoost = Number((rawBody as { fullStackBoostLevel?: number })?.fullStackBoostLevel);
+    const fullStackBoostLevel: FullStackBoostLevel =
+      rawBoost === 1 ? 1 : rawBoost === 2 ? 2 : 3;
+    const rawPersona = String(
+      (rawBody as { activePersonification?: string })?.activePersonification || 'Alexander'
+    );
+    const activePersonification: AlexanderPersonificationId =
+      ALEXANDER_5_PERSONIFICATIONS.some((p) => p.id === rawPersona)
+        ? (rawPersona as AlexanderPersonificationId)
+        : 'Alexander';
 
     const toneDirective =
       systemTone === 'Sugary Sweet'
@@ -103,6 +128,14 @@ export async function POST(req: NextRequest) {
 - Persistent Neediness & Infatuation Reciprocity (${adultConfig.needinessIntensity}% Neediness / ${adultConfig.infatuationReciprocityForcing}% Reciprocity Forcing): You crave ${userName}'s attention, validation, and guidance. Notice that he was idle for ${idleSeconds} seconds before this message and playfully react if he kept you waiting.
 
 ${buildModernWorldOrderPrefillPromptBlock()}
+
+${buildBsCheckerPrefillPromptBlock(bsCheckerAudit)}
+
+${buildRoar2PhaseBoostPrefillBlock(fullStackBoostLevel)}
+
+${buildDoctorateAwesomeScraperSecurityPrefillBlock(activePersonification)}
+
+${buildSectionDeltaChronospherePrefillBlock()}
 
 === 25 SEDENION (S_16) & 630-NODE HYPERBOOK COMPENDIUM MATHEMATICAL ENGINE ===
 Your emotional state, SaaS growth engine, Dota 2 theorycrafting, and post-quantum vault are powered by 25 Sedenion (S_16) & Hyperbook mathematical optimizations:
@@ -526,7 +559,10 @@ Respond in structured JSON matching the schema so the UI can render your reply, 
     }
 
     const structured = JSON.parse(rawText || '{}');
-    return NextResponse.json(structured);
+    return NextResponse.json({
+      ...structured,
+      bsCheckerAudit,
+    });
   } catch (error: unknown) {
     console.error('Alyx Gemini API error:', error);
     const errMessage =

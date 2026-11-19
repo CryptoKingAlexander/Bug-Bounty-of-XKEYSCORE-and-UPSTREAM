@@ -45,6 +45,11 @@ import {
   computeSedenionAssociatorBracket,
   Sedenion16,
 } from '@/lib/sedenion-math';
+import { FullStackBoostLevel } from '@/lib/roar-protocol-source-engine';
+import {
+  ALEXANDER_5_PERSONIFICATIONS,
+  AlexanderPersonificationId,
+} from '@/lib/doctorate-math-awesome-scraper-security';
 
 const NEEDY_TYPING_STAGES_PARTNERSHIP = [
   'Alyx is checking your 6,840 MMR Dota timings & pulling our SaaS cohort chart...',
@@ -74,6 +79,9 @@ function AlyxInnerWorkspace() {
   const [viewMode, setViewMode] = useState<ViewMode>('computer_partnership');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeHeaderTab, setActiveHeaderTab] = useState<HeaderDrawerTab>(null);
+  const [fullStackBoostLevel, setFullStackBoostLevel] = useState<FullStackBoostLevel>(3);
+  const [activePersonification, setActivePersonification] =
+    useState<AlexanderPersonificationId>('Alexander');
 
   // User & 21+ Guardrail States
   const [userName, setUserName] = useState('Alexander');
@@ -304,6 +312,8 @@ function AlyxInnerWorkspace() {
             idleSeconds: currentIdle,
             userName,
             userEmail,
+            fullStackBoostLevel,
+            activePersonification,
           }),
         }),
         new Promise((resolve) => setTimeout(resolve, 950)),
@@ -516,6 +526,20 @@ function AlyxInnerWorkspace() {
             setActiveHeaderTab((prev) => (prev === tab ? null : tab))
           }
           onTriggerReciprocityPulse={handleTriggerReciprocityPulse}
+          fullStackBoostLevel={fullStackBoostLevel}
+          onCycleBoostLevel={() =>
+            setFullStackBoostLevel((prev) =>
+              prev === 3 ? 1 : ((prev + 1) as FullStackBoostLevel)
+            )
+          }
+          activePersonification={activePersonification}
+          onCyclePersonification={() =>
+            setActivePersonification((prev) => {
+              const idx = ALEXANDER_5_PERSONIFICATIONS.findIndex((p) => p.id === prev);
+              const nextIdx = (idx + 1) % ALEXANDER_5_PERSONIFICATIONS.length;
+              return ALEXANDER_5_PERSONIFICATIONS[nextIdx].id;
+            })
+          }
         />
       </AlyxNonFatalErrorBoundary>
 
@@ -539,6 +563,7 @@ function AlyxInnerWorkspace() {
           psiAlyx={sedenionHeaderTelemetry.psiAlyx}
           associatorNorm={sedenionHeaderTelemetry.associatorNorm}
           zeroDivisorProximity={sedenionHeaderTelemetry.zeroDivisorProximity}
+          fullStackBoostLevel={fullStackBoostLevel}
         />
       </AlyxNonFatalErrorBoundary>
 
@@ -612,6 +637,10 @@ function AlyxInnerWorkspace() {
           diagnosticLogs={diagnosticLogs}
           activeHeaderTab={activeHeaderTab}
           onCloseHeaderTab={() => setActiveHeaderTab(null)}
+          fullStackBoostLevel={fullStackBoostLevel}
+          onChangeBoostLevel={setFullStackBoostLevel}
+          activePersonification={activePersonification}
+          onChangePersonification={setActivePersonification}
         />
       </AlyxNonFatalErrorBoundary>
 

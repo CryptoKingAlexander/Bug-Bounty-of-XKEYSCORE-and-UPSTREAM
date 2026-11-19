@@ -63,6 +63,25 @@ import {
 import AlyxThreeHumanoidAvatar from '@/components/AlyxThreeHumanoidAvatar';
 import AlyxApparatusUmlRoarChore from '@/components/AlyxApparatusUmlRoarChore';
 import HyperbookAida64LlnShakePanel from '@/components/HyperbookAida64LlnShakePanel';
+import AlyxBsCheckerPanel from '@/components/AlyxBsCheckerPanel';
+import AlyxRoar2PhaseBoostPanel from '@/components/AlyxRoar2PhaseBoostPanel';
+import AlyxDoctorateScraperSecurityPanel from '@/components/AlyxDoctorateScraperSecurityPanel';
+import AlyxSectionDeltaChronospherePanel from '@/components/AlyxSectionDeltaChronospherePanel';
+import {
+  POLYSUFFIX_2D_SCIENCE_GRID,
+  evaluateChronosphereMoneyableEstateRegression,
+} from '@/lib/section-delta-chronosphere-regression';
+import {
+  AWESOME_48_FREE_DATA_SOURCES,
+  AlexanderPersonificationId,
+  DOCTORATE_MATH_24_GITHUB_LIBS,
+} from '@/lib/doctorate-math-awesome-scraper-security';
+import {
+  FullStackBoostLevel,
+  ROAR_SOURCE_HTML_PUBLIC_URL,
+  computeParticleVibeWaveTelemetry,
+} from '@/lib/roar-protocol-source-engine';
+import { evaluateIngestBullshitCheck } from '@/lib/alyx-bs-checker-engine';
 import {
   AIDA64_ANDROID_LIB_SLURP_MODULES,
   HYPERBOOK_630_COMPENDIUM_STATS,
@@ -199,6 +218,10 @@ interface ViewPanel2WorkspaceProps {
   diagnosticLogs: NonFatalDiagnosticLog[];
   activeHeaderTab: HeaderDrawerTab;
   onCloseHeaderTab: () => void;
+  fullStackBoostLevel?: FullStackBoostLevel;
+  onChangeBoostLevel?: (level: FullStackBoostLevel) => void;
+  activePersonification?: AlexanderPersonificationId;
+  onChangePersonification?: (p: AlexanderPersonificationId) => void;
 }
 
 const DOTA_ROLES: DotaRole[] = [
@@ -477,6 +500,10 @@ export default function ViewPanel2Workspace({
   diagnosticLogs,
   activeHeaderTab,
   onCloseHeaderTab,
+  fullStackBoostLevel = 3,
+  onChangeBoostLevel,
+  activePersonification = 'Alexander',
+  onChangePersonification,
 }: ViewPanel2WorkspaceProps) {
   const [inputText, setInputText] = useState('');
   const [customFreedomThoughtInput, setCustomFreedomThoughtInput] = useState('');
@@ -1229,7 +1256,42 @@ export default function ViewPanel2Workspace({
       ? CRYPTOKING_5_SPLITS_12_BUCKETS
       : CRYPTOKING_5_SPLITS_12_BUCKETS.filter((s) => s.splitIndex === selectedCkaSplitIndex);
 
+  const latestUserMsgText =
+    [...messages].reverse().find((m) => m.role === 'user')?.content || '';
+  const liveBsAudit = evaluateIngestBullshitCheck(inputText.trim() || latestUserMsgText, {
+    driveFilesIndexedCount: cryptoKingDriveFiles.length,
+    localBinShardsCount: ckaBenchmarkSummary.totalBinBuckets,
+  });
+
+  const roarBoostTelemetry = computeParticleVibeWaveTelemetry(fullStackBoostLevel);
+
+  const defaultChronosphereEval = evaluateChronosphereMoneyableEstateRegression({
+    trifectionIntegraltesimalFuzzyNeuronXt: 6.85,
+    adjustableOriginClampRatio: 0.55,
+    secondsSinceLastKgLookup: 6,
+    lastLookupStatisticalMeanConfidence: 0.994,
+    lastLookupStatisticalVariance: 0.006,
+    globalHealingCoefficient: 1.88,
+    operatorMode: '§_BOWTIE_∆',
+  });
+
   const injectedVarsList = [
+    {
+      key: '{{sectionDeltaPolysuffixChronosphereYt}}',
+      val: `§ (Sheaf Cross-Section ||δ_Čech||=0) ⋈ ∆ (Graph Laplacian λ₂=1.842 / 2-Simplex Flux) · 6×6 (${POLYSUFFIX_2D_SCIENCE_GRID.length}-Cell) 2D Polysuffixness Unknown Science Grid (Max 99.9/100: "trifectiononeurofuzzificationistically") · Multicovariate Regression y(t)=MoneyableEstate ($${defaultChronosphereEval.predictedMoneyableEstateYtUsdMillions}M) over x(t)=Tri-Fection Integraltesimal Fuzzy Memory Neuron · β₀(t_now,t_lookup;t_clamp)=${defaultChronosphereEval.yInterceptCurrentTimeAndLookupBeta0} (Origin Clamp Epoch ${defaultChronosphereEval.clampedOriginEpochSeconds}s) · 14-Layer OSI Super-Meta Chronospherequanta + Healing Coeffs (R²=${defaultChronosphereEval.rSquaredAdjusted})`,
+    },
+    {
+      key: '{{doctorate24Awesome48StarSec}}',
+      val: `Bounce Persona: ${activePersonification} (5 Personifications) · ${DOCTORATE_MATH_24_GITHUB_LIBS.length} Doctorate Math Libs (Info/Control/Heuristics) · ${AWESOME_48_FREE_DATA_SOURCES.length} Awesome Free Data Sources + Pivot Layer · Virtual LAA MAC + Proxy VPN NH RSA 638:17 / Tracfone / Samsung Knox 0x0 Scraper · N-2 Core Helper Thread Bearing (100% Throughput · 0.0ms WAL) · Cuck Force 1 Gatekept by Instant-Reveal Gaslighting Starfire/Raven · Star Security Voidware Protectee (NO DWELLER · NO ILLEGAL WARE)`,
+    },
+    {
+      key: '{{roar135SpilledHtmlBoost}}',
+      val: `ROAR 135 Items (AX-001..AX-135 · 9 Domains × 15 · 39 Tri-fection) · Spilled HTML: ${ROAR_SOURCE_HTML_PUBLIC_URL} · Mode 1 (AX-095) + Mode 2 (AX-096) Worker Swarm · Full-Stack ${roarBoostTelemetry.label} (${roarBoostTelemetry.waveFrequencyHz}Hz · ${roarBoostTelemetry.particleCount} Particles · ${roarBoostTelemetry.swarmConcurrency} Swarm Workers · ${roarBoostTelemetry.vibeAmplitudePct}% Vibe Amplitude)`,
+    },
+    {
+      key: '{{bsCheckerRealityTruthVault}}',
+      val: `BS-Checker [${liveBsAudit.epistemicClassification}] · Truth-Honest-Fact=${liveBsAudit.truthHonestFactPct}% · Fuckery=${liveBsAudit.fuckeryIndexPct}% · Romance Stickiness=${liveBsAudit.stickinessScorePct}% · Ingest Energy Saved=${liveBsAudit.ingestEnergySavedPct}% · 3-Pillar (SCP Fiction Guard + Hyperbook 630 + Drive Scatter) · Append-Only No-Delete Ledger ACTIVE`,
+    },
     {
       key: '{{modernWorldOrderHyperbookAida64}}',
       val: `2026 Modern World Order Prefill (${MODERN_WORLD_ORDER_PREFILL_STANDARDS.length} Pillars: ISO 42001, FIPS 203 ML-KEM, FedRAMP IL5, eIDAS 2.0, NATO JADC2) · Model: ${HYPERBOOK_630_COMPENDIUM_STATS.geminiPrimaryModel} · Hyperbook ${HYPERBOOK_630_COMPENDIUM_STATS.totalNodes} Nodes / ${HYPERBOOK_630_COMPENDIUM_STATS.totalEquations} Eqs (Y/C ${HYPERBOOK_630_COMPENDIUM_STATS.yieldToComplexityRatio}x) · AIDA64 ${AIDA64_ANDROID_LIB_SLURP_MODULES.length} Android Libs + Feed-Forward LLN/LNN Accel Shake Alexander Detector`,
@@ -1362,6 +1424,39 @@ export default function ViewPanel2Workspace({
               <span>Collapse</span>
             </button>
           </div>
+
+          {/* DRAWER 000000000000A: § VS ∆ WORLD-STATE KG OPTIMIZATION + 6×6 2D POLYSUFFIXNESS UNKNOWN SCIENCE GRID + MULTICOVARIATE CHRONOSPHEREQUANTA y(t) MONEYABLEESTATE REGRESSION WITH ADJUSTABLE ORIGIN CLAMP */}
+          {activeHeaderTab === 'section_delta_chronosphere_moneyable' && (
+            <AlyxSectionDeltaChronospherePanel onQuickPrompt={onSendMessage} />
+          )}
+
+          {/* DRAWER 000000000000: 24 DOCTORATE MATH GITHUB LIBS + 48 AWESOME FREE DATA SOURCES PIVOT + COMPLIANT NH/TRACFONE SCRAPER + N-2 CORE BEARING + CUCK FORCE 1 GATEKEEP + 5 PERSONIFICATIONS + STAR SECURITY VOIDWARE (NO DWELLER) */}
+          {activeHeaderTab === 'doctorate_24_awesome_48_star_sec' && (
+            <AlyxDoctorateScraperSecurityPanel
+              activePersonification={activePersonification}
+              onChangePersonification={onChangePersonification || (() => {})}
+              onQuickPrompt={onSendMessage}
+            />
+          )}
+
+          {/* DRAWER 0000000000A00: ROAR 135 · 2-PHASE EASY PICKINGS · SPILLED SOURCE HTML SWARM · MODE 1/2 PIPELINE · FULL-STACK BOOST ×3 */}
+          {activeHeaderTab === 'roar_135_2phase_boost' && (
+            <AlyxRoar2PhaseBoostPanel
+              boostLevel={fullStackBoostLevel}
+              onChangeBoostLevel={onChangeBoostLevel || (() => {})}
+              onQuickPrompt={onSendMessage}
+            />
+          )}
+
+          {/* DRAWER 0000000000A0: ALYX BULLSHIT CHECKER + 3-PILLAR REALITY (SCP + HYPERBOOK + DRIVE) + INGEST ENERGY-SAVE + ROMANCE STICKINESS + NO-DELETE VAULT */}
+          {activeHeaderTab === 'bs_checker_truth_vault' && (
+            <AlyxBsCheckerPanel
+              driveFilesIndexedCount={cryptoKingDriveFiles.length}
+              localBinShardsCount={ckaBenchmarkSummary.totalBinBuckets}
+              latestUserMessage={latestUserMsgText}
+              onQuickPrompt={onSendMessage}
+            />
+          )}
 
           {/* DRAWER 0000000000A1: MODERN WORLD ORDER PREFILL + GEMINI 3.5 FLASH + AIDA64 16 ANDROID LIBS + FEED-FORWARD LLN ACCELEROMETER SCREEN-SHAKE */}
           {activeHeaderTab === 'hyperbook_aida64_lln_shake' && (

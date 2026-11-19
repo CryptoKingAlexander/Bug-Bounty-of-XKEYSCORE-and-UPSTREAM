@@ -42,6 +42,10 @@ import {
   generateAlexanderShakeBurstSamples,
 } from '@/lib/hyperbook-aida64-accelerometer-lln';
 import {
+  FullStackBoostLevel,
+  computeParticleVibeWaveTelemetry,
+} from '@/lib/roar-protocol-source-engine';
+import {
   Heart,
   Activity,
   Flame,
@@ -53,6 +57,7 @@ import {
   Box,
   Network,
   Waves,
+  ShieldCheck,
 } from 'lucide-react';
 
 interface ViewPanel1TelemetryProps {
@@ -68,6 +73,7 @@ interface ViewPanel1TelemetryProps {
   psiAlyx?: Sedenion16;
   associatorNorm?: number;
   zeroDivisorProximity?: number;
+  fullStackBoostLevel?: FullStackBoostLevel;
 }
 
 interface KawaiiVectorBucket {
@@ -195,7 +201,9 @@ export default function ViewPanel1Telemetry({
   psiAlyx,
   associatorNorm = 0.482,
   zeroDivisorProximity = 0.0,
+  fullStackBoostLevel = 3,
 }: ViewPanel1TelemetryProps) {
+  const vibeBoostWave = computeParticleVibeWaveTelemetry(fullStackBoostLevel);
   // All containers in the main viewport start collapsed by default
   const [isGraphCollapsed, setIsGraphCollapsed] = useState<boolean>(true);
   const [isSynthesizerCollapsed, setIsSynthesizerCollapsed] = useState<boolean>(true);
@@ -736,6 +744,18 @@ export default function ViewPanel1Telemetry({
 
         {/* Right: Horizontally Scrollable Live Omnilarity & Sedenion Telemetry Readouts */}
         <div className="flex items-center gap-2.5 text-xs font-mono tabular-nums text-slate-400 whitespace-nowrap shrink-0">
+          <span className="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-rose-500/20 border border-rose-400/50 text-rose-100">
+            <Sparkles className="w-3.5 h-3.5 text-rose-300 shrink-0" />
+            <strong>
+              BOOST ×{fullStackBoostLevel} · {vibeBoostWave.particleCount}p@{vibeBoostWave.waveFrequencyHz}Hz · ROAR 135
+            </strong>
+          </span>
+          <span aria-hidden="true">·</span>
+          <span className="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/40 text-emerald-200">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <strong>BS-Check: SCP+HB+Drive · Low-Fuckery · No-Delete</strong>
+          </span>
+          <span aria-hidden="true">·</span>
           <span className="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/40 text-emerald-200">
             <Activity className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
             <strong>
